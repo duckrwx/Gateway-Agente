@@ -3,50 +3,287 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gateway Agente - Sepolia</title>
+    <title>AI Gateway | First Sprint</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; }
-        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
-        .card { background: #fff; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        button { background-color: #3498db; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px; }
-        button:hover { background-color: #2980b9; }
-        button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
-        input { padding: 10px; width: 100%; margin-top: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        .status { margin-top: 20px; padding: 15px; background-color: #e8f8f5; border-left: 4px solid #1abc9c; border-radius: 4px; }
-        .error { background-color: #fdedec; border-left: 4px solid #e74c3c; }
-        .wallet-info { float: right; background: #ecf0f1; padding: 10px; border-radius: 4px; }
-        .admin-link { display: inline-block; margin-top: 10px; color: #7f8c8d; text-decoration: none; font-size: 14px; }
-        .admin-link:hover { text-decoration: underline; }
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: rgba(22, 27, 34, 0.7);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --primary: #8a2be2; /* Roxo futurista */
+            --secondary: #00d2ff; /* Azul neon */
+            --success: #2ea043;
+            --danger: #ff4b4b;
+            --text-main: #e6edf3;
+            --text-muted: #8b949e;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top left, #1a0b2e 0%, var(--bg-color) 50%);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        /* Cabecalho */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+
+        .logo-area h1 {
+            margin: 0;
+            font-size: 28px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .sprint-badge {
+            background: rgba(138, 43, 226, 0.2);
+            border: 1px solid var(--primary);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        /* Status da Carteira */
+        .wallet-status {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        #wallet-address {
+            font-family: monospace;
+            color: var(--text-muted);
+            background: rgba(0,0,0,0.3);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Layout em Grid para os Cards */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        /* Cards estilo Glassmorphism */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        /* Formularios e Botoes */
+        input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-family: monospace;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--secondary);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            color: #fff;
+            transition: all 0.2s ease;
+            margin-bottom: 10px;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        button:disabled {
+            background-color: #555 !important;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .btn-connect { background: var(--primary); width: auto; padding: 10px 20px; }
+        .btn-connect:hover { background: #7121b8; }
+
+        .btn-admin { background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%); }
+        .btn-admin:hover { opacity: 0.9; }
+
+        .btn-ai { background: var(--success); }
+        .btn-ai:hover { background: #238636; }
+
+        .btn-danger { background: transparent; border: 1px solid var(--danger); color: var(--danger); }
+        .btn-danger:hover { background: rgba(255, 75, 75, 0.1); }
+
+        /* Terminal Logs */
+        .terminal-container {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .terminal-header {
+            position: absolute;
+            top: 0; left: 0; width: 100%;
+            background: #111;
+            padding: 8px 15px;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            font-size: 12px;
+            color: #666;
+            box-sizing: border-box;
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+
+        .terminal-content {
+            margin-top: 25px;
+            font-family: 'Courier New', Courier, monospace;
+            color: #0f0;
+            font-size: 14px;
+            height: 120px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        .log-error { color: #ff4b4b; }
+        .log-success { color: #00d2ff; }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+            .header { flex-direction: column; gap: 20px; align-items: flex-start; }
+        }
     </style>
 </head>
 <body>
-    <div class="wallet-info">
-        <span id="walletAddress">Não conectado</span>
-        <button id="connectWalletBtn">Conectar MetaMask</button>
+
+<div class="container">
+    <div class="header">
+        <div class="logo-area">
+            <h1>GatewayAgente <span class="sprint-badge">Sprint 1</span></h1>
+        </div>
+        <div class="wallet-status">
+            <span id="wallet-address">Não conectado</span>
+            <button id="btn-connect" class="btn-connect">Conectar Web3</button>
+        </div>
     </div>
 
-    <h1>Interface Pública: Gateway Agente</h1>
-    <p>Interaja com o contrato inteligente na rede <strong>Sepolia Testnet</strong>.</p>
-    <p>Endereço do Contrato: <code>0x99905D8287B3bDA46fcCAA09Bc6a2819572bec04</code></p>
-
-    <div class="card">
-        <h2>Status do Contrato</h2>
-        <p><strong>Dono Atual (Owner):</strong> <span id="ownerAddress">Carregando...</span></p>
-        <p><strong>Rota Autorizada:</strong> <span id="routerAddress">Carregando...</span></p>
-        <p><strong>Último Registro:</strong> <span id="lastRecord">Carregando...</span></p>
-        <button id="refreshBtn">Atualizar Dados</button>
+    <!-- Novo Card para Exibir Status do Contrato (Opcional, mas util para o MVP) -->
+    <div class="card" style="margin-bottom: 24px; padding: 20px;">
+        <h2 style="font-size: 16px; margin-bottom: 10px; color: var(--secondary);">Status On-Chain (Sepolia)</h2>
+        <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); font-family: monospace;">
+            <span><strong>Owner:</strong> <span id="ownerAddress">Carregando...</span></span>
+            <span><strong>Rota Atual:</strong> <span id="routerAddress">Carregando...</span></span>
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted); font-family: monospace; margin-top: 10px;">
+            <span><strong>Último Registro:</strong> <span id="lastRecord">Carregando...</span></span>
+        </div>
     </div>
 
-    <div class="card">
-        <h2>Autorizar Operação (Agente)</h2>
-        <p>Apenas será aceito o endereço configurado na Rota Autorizada.</p>
-        <input type="text" id="destinoInput" placeholder="Ex: 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D">
-        <button id="autorizarBtn" disabled>Enviar Transação</button>
+    <div class="grid">
+        <div class="card">
+            <h2>Gestão de Adapters (Owner)</h2>
+            <p>Altere a Rota Segura do Gateway (Apenas a carteira do criador do contrato pode fazer isso).</p>
+            
+            <input type="text" id="input-adapter-address" placeholder="0x... (Novo Endereço)">
+            <button id="btn-approve" class="btn-admin" disabled>Atualizar Rota</button>
+        </div>
+
+        <div class="card">
+            <h2>Simulação: IA Trader</h2>
+            <p>Simule um comando do Agente de IA. O Gateway barrará a transação se o Adapter não for a Rota Atual.</p>
+            
+            <input type="text" id="input-trade-destination" placeholder="0x... (Destino sugerido pela IA)">
+            
+            <button id="btn-trade-safe" class="btn-ai" disabled>Simular IA (Adaptador Seguro)</button>
+            <button id="btn-trade-hack" class="btn-danger" disabled>Simular IA (Adaptador Malicioso)</button>
+        </div>
     </div>
 
-    <div id="statusMessage" class="status" style="display: none;"></div>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.11.1/ethers.umd.min.js"></script>
-    <script src="app.js"></script>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="dot dot-red"></span>
+            <span class="dot dot-yellow"></span>
+            <span class="dot dot-green"></span>
+            <span style="margin-left: 10px;">console - node /firstsprint</span>
+        </div>
+        <div id="console-output" class="terminal-content">
+            > Sistema GatewayAgente inicializado...<br>
+            > Aguardando injeção de provedor (MetaMask)...<br>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.11.1/ethers.umd.min.js"></script>
+<script src="app.js"></script>
+
 </body>
 </html>
