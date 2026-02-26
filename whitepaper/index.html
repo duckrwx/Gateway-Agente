@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whitepaper | GatewayAgente</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --paper-bg: rgba(22, 27, 34, 0.8);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --primary: #8a2be2;
+            --secondary: #00d2ff;
+            --text-main: #e6edf3;
+            --text-muted: #8b949e;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0d1117;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(138, 43, 226, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(0, 210, 255, 0.08) 0%, transparent 50%);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: rgba(13, 17, 23, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 40px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar .logo {
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .navbar a.btn-back {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .navbar a.btn-back:hover {
+            color: #fff;
+            border-color: var(--secondary);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .paper-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .paper-header h1 {
+            font-size: 36px;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .paper-header .subtitle {
+            font-size: 18px;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .paper-content {
+            background: var(--paper-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 50px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        h2 {
+            color: var(--secondary);
+            font-size: 24px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 210, 255, 0.2);
+            padding-bottom: 10px;
+        }
+
+        h2::before {
+            content: ">> ";
+            color: var(--primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        h3 {
+            color: #fff;
+            font-size: 18px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            color: #c9d1d9;
+            font-size: 16px;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        ul {
+            color: #c9d1d9;
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .highlight-box {
+            background: rgba(138, 43, 226, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 30px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .paper-content { padding: 30px 20px; }
+            .paper-header h1 { font-size: 28px; }
+            .navbar { padding: 15px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="../" class="logo">GatewayAgente</a>
+        <a href="../" class="btn-back">← Voltar ao App</a>
+    </nav>
+
+    <div class="container">
+        <div class="paper-header">
+            <h1>WHITEPAPER: GatewayAgente</h1>
+            <div class="subtitle">Infraestrutura Criptoeconômica e Firewall Descentralizado para Agentes de IA em DeFi</div>
+        </div>
+
+        <div class="paper-content">
+            
+            <h2>1. Resumo Executivo (Abstract)</h2>
+            <p>A intersecção entre Inteligência Artificial (IA) e Finanças Descentralizadas (DeFi) representa o ápice da eficiência na alocação de capital. Contudo, o paradigma atual de delegar custódia ou permissões irrestritas a modelos autônomos introduz vetores de ataque catastróficos, como exfiltração de fundos e alucinações algorítmicas. O GatewayAgente soluciona o "Trilema da Automação" através de uma arquitetura de Smart Vault modular. Ao isolar a inteligência off-chain da execução on-chain, empregar um limite rígido de perdas absolutas (Hard Floor) e proteger a propriedade intelectual das estratégias através de um consenso descentralizado de backtest (Proof of Backtest), o protocolo garante matematicamente que IAs possam operar capital em larga escala sem jamais possuir a capacidade de extraí-lo indevidamente.</p>
+
+            <h2>2. O Paradigma Atual e a Falácia da Custódia em IA</h2>
+            <p>O modelo padrão de "Trading Bots" exige que o usuário deposite liquidez em uma carteira (EOA) controlada pela automação. Essa arquitetura é insustentável para capital institucional devido a três falhas críticas:</p>
+            <ul>
+                <li><strong>Exfiltração P2P:</strong> Um agente hackeado (ou malicioso desde a sua concepção) pode transferir o TVL (Valor Total Bloqueado) diretamente para uma carteira anônima.</li>
+                <li><strong>Drenagem via Scam Tokens:</strong> O agente utiliza uma DEX legítima para comprar um token sem liquidez criado pelo próprio invasor, transferindo o valor do cofre de forma indireta.</li>
+                <li><strong>Roubo de Alpha (Propriedade Intelectual):</strong> Para auditar a segurança de um robô, plataformas centralizadas exigem acesso ao código-fonte, expondo desenvolvedores ao roubo de suas estratégias proprietárias.</li>
+            </ul>
+
+            <h2>3. A Arquitetura Central: O Cérebro e a Mão</h2>
+            <p>O GatewayAgente implementa o Princípio do Privilégio Mínimo através da fragmentação da operação:</p>
+            <ul>
+                <li><strong>O Cérebro (IA - Off-chain):</strong> Monitora o mercado, elabora estratégias e emite um sinal de intenção (ex: "Swap de WBTC por USDC"). A IA atua apenas como um oráculo de sinais e não possui chaves de acesso aos fundos.</li>
+                <li><strong>A Mão (Gateway Vault - On-chain):</strong> O Smart Contract que detém a custódia. Ele recebe a intenção do Cérebro, submete a ordem a um Firewall Matemático e, se validada, executa a operação. O capital transita exclusivamente por canais criptograficamente aprovados.</li>
+            </ul>
+
+            <div class="highlight-box">
+                [Fluxo de Execução]<br>
+                1. IA -> Emite Sinal Assinado<br>
+                2. Smart Vault -> Valida Assinatura da IA<br>
+                3. Smart Vault -> Verifica limites de Drawdown e Destinos Permitidos<br>
+                4. Smart Vault -> Roteia para o Adapter da DEX correspondente
+            </div>
+
+            <h2>4. O Padrão Modular (Adapter Pattern) e Whitelist Dinâmica</h2>
+            <p>Para interagir com o ecossistema DeFi sem criar um contrato monolítico e frágil, o GatewayAgente utiliza o Padrão de Adaptadores, dividido em três camadas:</p>
+            <ul>
+                <li><strong>Gateway Vault (O Núcleo):</strong> Retém o capital. Recebe a chamada da IA e consulta a camada de permissões.</li>
+                <li><strong>Whitelist Registry (O Juiz):</strong> Um registro dinâmico (mapping) que dita quais protocolos e pares de tokens são seguros. Funciona como um Circuit Breaker contra hacks externos.</li>
+                <li><strong>DEX Adapters (Os Tradutores):</strong> Contratos stateless (sem estado financeiro) que traduzem o comando universal da IA para a linguagem específica de cada protocolo (ex: Uniswap V3, Curve).</li>
+            </ul>
+
+            <h2>5. Mecânica Criptoeconômica: Oráculos, High-Water Mark e Hard Floor</h2>
+            <p>Para proteger o capital contra a volatilidade extrema e gerenciar a rentabilidade, o protocolo abandona cálculos percentuais frágeis em Solidity e adota métricas absolutas rigorosas:</p>
+            <ul>
+                <li><strong>Marcação a Mercado via Oráculos:</strong> O cofre utiliza redes de oráculos descentralizados (como a Chainlink) para avaliar o valor total do portfólio (ex: WBTC + USDC) em tempo real a cada transação, sem depender de liquidações parciais para calcular o lucro.</li>
+                <li><strong>Drawdown em Valor Absoluto (Hard Floor):</strong> Se um investidor aloca US$ 10.000 com um limite de perda de US$ 1.500, o Smart Contract grava o <em>pisoDeSeguranca</em> fixo em US$ 8.500. Se a precificação do oráculo atingir US$ 8.499 no milissegundo de uma operação, a IA é sumariamente ejetada e o capital remanescente é trancado para saque.</li>
+                <li><strong>High-Water Mark:</strong> A taxa de performance da IA só é paga sobre o lucro real (o valor que ultrapassa o maior pico histórico do cofre no fechamento do ciclo), alinhando perfeitamente a ganância do desenvolvedor com o sucesso do investidor.</li>
+            </ul>
+
+            <h2>6. Privacidade e Auditoria Descentralizada: "Proof of Backtest"</h2>
+            <p>Como validar uma IA sem exigir que o criador revele seu código secreto? O GatewayAgente introduz uma rede descentralizada de validação (DON) aliada a Ambientes de Execução Confiáveis (TEEs).</p>
+            <ul>
+                <li><strong>A Submissão "Caixa Preta":</strong> O desenvolvedor submete seu agente compilado (Docker/TEE) à rede, ocultando totalmente os pesos do modelo e a lógica de trading.</li>
+                <li><strong>Consenso de Sandbox:</strong> Uma rede descentralizada de nós validadores executa o agente em um ambiente simulado contra dados históricos padronizados.</li>
+                <li><strong>Validação Criptográfica (Threshold Signatures):</strong> Os nós não julgam a tese de investimento, apenas os limites de risco. Se o agente respeitar o Hard Floor e não tentar desvios maliciosos, os nós atingem um consenso matemático.</li>
+                <li><strong>Registro On-chain:</strong> A rede gera uma assinatura coletiva que o Smart Contract reconhece. O robô é aprovado na Whitelist de forma autônoma, preservando 100% do sigilo (Zero-Knowledge) sobre o seu "Alpha".</li>
+            </ul>
+
+            <h2>7. Governança Progressiva</h2>
+            <p>A arquitetura do GatewayAgente foi desenhada para uma transição fluida de controle. Na fase Gênesis, parâmetros críticos e adaptadores de emergência podem ser geridos por um Admin/Red Team para garantir agilidade contra exploits de Dia Zero. Contudo, através de funções integradas de transferência de propriedade (transferOwnership), o protocolo converte-se progressivamente em uma Organização Autônoma Descentralizada (DAO). O poder de registrar novos adaptadores, alterar limites globais de risco e gerenciar a rede de nós de backtest passa a exigir o consenso on-chain da comunidade de detentores de tokens.</p>
+
+            <h2>8. Conclusão</h2>
+            <p>O GatewayAgente redefine a automação de capital institucional na Web3. Ao transformar a Inteligência Artificial de uma entidade onipotente e perigosa em um "oráculo de intenções" restrito por limites absolutos, validado por consenso descentralizado e executado via adaptadores isolados, o protocolo resolve o paradoxo da segurança DeFi. O resultado é um ecossistema onde desenvolvedores mantêm a privacidade de suas teses, investidores têm proteção matemática contra a ruína, e o capital flui com a máxima eficiência algorítmica.</p>
+            
+        </div>
+    </div>
+
+</body>
+</html>
