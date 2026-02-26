@@ -7,19 +7,19 @@ Este repositório contém o contrato inteligente `GatewayAgente` e uma interface
 ### Sprint 1: Prova de Conceito Web3 (Concluída)
 **Objetivo:** Demonstrar a integração básica entre um site e um contrato inteligente ("Um site conversa com um contrato na blockchain") implementando o registro de um dado on-chain.
 - [x] Contrato Solidity simplificado (`^0.8.20`), achatado para remover dependências externas e evitar problemas de opcode em redes específicas.
-- [x] Deploy na rede **Polygon Amoy Testnet** (Chain ID: 80002).
+- [x] Deploy na rede **Sepolia Testnet** (Chain ID: 11155111).
 - [x] Interface frontend (HTML/JS) simples conectada via Ethers.js (v5.7.2) e MetaMask.
 - [x] Interação on-chain: leitura de estado, simulação de bloqueio (require) e transação bem-sucedida alterando o estado (`ultimoRegistro`).
 - **Entregáveis Acadêmicos:**
-  - Print 1: Deploy do contrato no explorador amoy.polygonscan.com.
+  - Print 1: Deploy do contrato no explorador sepolia.etherscan.io.
   - Print 2: Interface frontend conectada à MetaMask.
   - Print 3: Transação confirmada no explorador (hash da operação segura).
 
 ---
 
-## 📌 Detalhes do Contrato (Amoy Testnet)
+## 📌 Detalhes do Contrato (Sepolia Testnet)
 
-- **Rede:** Polygon Amoy Testnet
+- **Rede:** Sepolia Testnet
 - **Compilador:** Solc ^0.8.19
 - **Características:** Sem dependências externas (flattened) para evitar o opcode `PUSH0`.
 
@@ -37,6 +37,6 @@ Este repositório contém o contrato inteligente `GatewayAgente` e uma interface
 
 1. **Abra o arquivo `index.html`** no seu navegador ou hospede a pasta `/frontend`.
 2. Certifique-se de ter a **MetaMask** instalada.
-3. Altere a rede da sua MetaMask para a **Polygon Amoy Testnet**.
+3. Altere a rede da sua MetaMask para a **Sepolia Testnet**.
 4. Clique em **"Conectar MetaMask"**.
 5. Interaja com as funções do contrato (Simular Ataque, Operação Segura, etc).

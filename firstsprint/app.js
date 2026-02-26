@@ -39,10 +39,10 @@ async function connectWallet() {
             signer = await provider.getSigner();
             
             const network = await provider.getNetwork();
-            // Verificando Chain ID da Polygon Amoy (80002)
-            if (network.chainId !== 80002n) {
-                showStatus("Aviso: Você não está na rede Polygon Amoy Testnet (Chain ID 80002). As transações podem falhar.", true);
-                // return; // Comentado para permitir conexão mesmo em rede errada temporariamente
+            // Verificando Chain ID da Sepolia (11155111)
+            if (network.chainId !== 11155111n) {
+                showStatus("Por favor, mude para a rede Sepolia Testnet no MetaMask!", true);
+                return;
             }
 
             const address = await signer.getAddress();
@@ -68,8 +68,8 @@ async function updateContractData() {
     try {
         let readProvider = provider;
         if (!readProvider) {
-            // Usa o RPC público da Amoy se a MetaMask não estiver conectada
-            readProvider = new ethers.JsonRpcProvider("https://rpc-amoy.polygon.technology/");
+            // Usa o RPC público da Sepolia se a MetaMask não estiver conectada
+            readProvider = new ethers.JsonRpcProvider("https://ethereum-sepolia-rpc.publicnode.com");
         }
         
         const readContract = new ethers.Contract(contractAddress, contractABI, readProvider);
@@ -87,7 +87,7 @@ async function updateContractData() {
         ownerAddressSpan.textContent = "Erro na rede";
         routerAddressSpan.textContent = "Erro na rede";
         lastRecordSpan.textContent = "Erro na rede";
-        showStatus("Erro de conexão com a Polygon Amoy. A rede pode estar congestionada.", true);
+        showStatus("Erro de conexão com a Sepolia. A rede pode estar congestionada.", true);
     }
 }
 

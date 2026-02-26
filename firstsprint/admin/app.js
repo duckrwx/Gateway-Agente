@@ -39,8 +39,8 @@ async function connectWallet() {
             signer = await provider.getSigner();
             
             const network = await provider.getNetwork();
-            if (network.chainId !== 80002n) {
-                showStatus("Por favor, mude para a rede Polygon Amoy Testnet no MetaMask!", true);
+            if (network.chainId !== 11155111n) {
+                showStatus("Por favor, mude para a rede Sepolia Testnet no MetaMask!", true);
                 return;
             }
 
