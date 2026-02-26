@@ -24,7 +24,7 @@ Este repositório contém o contrato inteligente `GatewayAgente` e uma interface
 - **Características:** Sem dependências externas (flattened) para evitar o opcode `PUSH0`.
 
 ### Funcionalidades
-- **Whitelisting (Filtro de Destino):** O agente só pode operar com endereços autorizados (ex: Uniswap Router).
+- **Rota Única Autorizada (Strict Routing):** O agente só pode operar com um endereço de destino por vez, configurado pelo DAO quando o ownership dor alterado. A função `atualizarRotaSegura` será chamada para testar wallets que entrarem na Whitelist."
 - **Registro On-chain:** Cumpre o requisito de gravar o histórico da operação na variável `ultimoRegistro`.
 - **Governança Progressiva:** O admin pode transferir a propriedade (owner) do contrato para uma DAO (`transferirParaDAO`).
 
