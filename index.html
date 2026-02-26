@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GatewayAgente | Protocolo de Segurança IA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: rgba(22, 27, 34, 0.7);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --primary: #8a2be2;
+            --secondary: #00d2ff;
+            --success: #2ea043;
+            --warning: #d29922;
+            --text-main: #e6edf3;
+            --text-muted: #8b949e;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0d1117;
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(138, 43, 226, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(0, 210, 255, 0.1) 0%, transparent 40%);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto 30px auto;
+            line-height: 1.6;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:active { transform: scale(0.98); }
+
+        .btn-app {
+            background: linear-gradient(90deg, var(--primary), #7121b8);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .btn-app:hover {
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+        }
+
+        .btn-doc {
+            background: var(--card-bg);
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-doc:hover {
+            background: rgba(0, 210, 255, 0.1);
+        }
+
+        /* Status Board */
+        .status-board {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+
+        .status-board .highlight {
+            color: var(--success);
+        }
+
+        /* Roadmap Timeline */
+        .roadmap-title {
+            font-size: 28px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .roadmap-title::before, .roadmap-title::after {
+            content: "";
+            height: 1px;
+            flex: 1;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+            max-width: 200px;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            position: relative;
+        }
+
+        /* Timeline vertical line */
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 24px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border-color);
+            z-index: 0;
+        }
+
+        .sprint-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+            margin-left: 60px;
+            transition: transform 0.2s ease;
+        }
+
+        .sprint-card:hover {
+            transform: translateX(5px);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        /* Timeline nodes */
+        .sprint-card::before {
+            content: '';
+            position: absolute;
+            left: -43px;
+            top: 35px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--bg-color);
+            border: 2px solid var(--border-color);
+            z-index: 2;
+        }
+
+        .sprint-card.done::before {
+            background: var(--success);
+            border-color: var(--success);
+            box-shadow: 0 0 10px var(--success);
+        }
+
+        .sprint-card.active::before {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        .sprint-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .sprint-title {
+            margin: 0;
+            font-size: 20px;
+            color: #fff;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge.done { background: rgba(46, 160, 67, 0.2); color: var(--success); border: 1px solid var(--success); }
+        .badge.active { background: rgba(138, 43, 226, 0.2); color: #fff; border: 1px solid var(--primary); }
+        .badge.planned { background: rgba(139, 148, 158, 0.2); color: var(--text-muted); border: 1px solid var(--text-muted); }
+        .badge.future { background: rgba(210, 153, 34, 0.2); color: var(--warning); border: 1px solid var(--warning); }
+
+        .sprint-objective {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .deliverables {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+        }
+
+        .deliverables h4 {
+            margin-top: 0;
+            color: var(--secondary);
+            font-size: 14px;
+            margin-bottom: 10px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .deliverables ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #c9d1d9;
+            font-size: 14px;
+        }
+
+        .deliverables li {
+            margin-bottom: 8px;
+        }
+
+        .milestone {
+            border-left: 3px solid var(--success);
+            padding-left: 15px;
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .milestone strong {
+            color: var(--success);
+        }
+
+        @media (max-width: 768px) {
+            .timeline::before { left: 15px; }
+            .sprint-card { margin-left: 40px; padding: 20px; }
+            .sprint-card::before { left: -32px; }
+            .hero h1 { font-size: 36px; }
+            .status-board { flex-direction: column; gap: 10px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1>GatewayAgente</h1>
+            <p>Infraestrutura Criptoeconômica e Firewall Descentralizado para Agentes de IA em Finanças Descentralizadas (DeFi). Transformando IAs em oráculos de intenção matematicamente seguros.</p>
+            
+            <div class="action-buttons">
+                <a href="/firstsprint/" class="btn btn-app">Acessar MVP (App)</a>
+                <a href="/whitepaper/" class="btn btn-doc">Ler Whitepaper</a>
+            </div>
+        </div>
+
+        <!-- Status Board -->
+        <div class="status-board">
+            <div>[ SISTEMA ] <span style="color: #fff;">Status Atual:</span></div>
+            <div><span class="highlight">Fase de Prova de Conceito (PoC) Concluída. Iniciando Arquitetura Modular.</span></div>
+        </div>
+
+        <h2 class="roadmap-title">Roadmap e Estruturação do MVP</h2>
+
+        <!-- Timeline -->
+        <div class="timeline">
+            
+            <!-- Sprint 1 -->
+            <div class="sprint-card done">
+                <div class="sprint-header">
+                    <h3 class="sprint-title">📍 SPRINT 1: Fundações do Proxy e Firewall Básico</h3>
+                    <span class="badge done">Concluído - Estamos Aqui</span>
+                </div>
+                <div class="sprint-objective">
+                    <strong>Objetivo:</strong> Provar a viabilidade técnica de separar o "Cérebro" (Decisão) da "Mão" (Execução) utilizando Smart Contracts e uma interface Web3.
+                </div>
+                <div class="deliverables">
+                    <h4>>> Entregáveis Técnicos</h4>
+                    <ul>
+                        <li>Desenvolvimento do contrato monolítico GatewayAgente.sol (Solidity ^0.8.19).</li>
+                        <li>Implementação da Whitelist Estática (Filtro de Destino) via mapping.</li>
+                        <li>Criação do Front-end (HTML5, CSS3 Glassmorphism, Vanilla JS).</li>
+                        <li>Integração com ethers.js e MetaMask para injeção de provedor.</li>
+                        <li>Simulação de papéis: Red Team (Admin) e Agente (Usuário chamando a função proxy).</li>
+                    </ul>
+                </div>
+                <div class="milestone">
+                    <strong>Marco de Sucesso:</strong> Transação de "Simulação de IA" aprovada, bloqueando destinos não autorizados e registrando o hash com sucesso na Testnet.
+                </div>
+            </div>
+
+            <!-- Sprint 2 -->
+            <div class="sprint-card active">
+                <div class="sprint-header">
+                    <h3 class="sprint-title">⚙️ SPRINT 2: Padrão de Adaptadores e Gestão de Risco</h3>
+                    <span class="badge active">Próximo Passo</span>
+                </div>
+                <div class="sprint-objective">
+                    <strong>Objetivo:</strong> Evoluir o contrato de um cofre simples para uma arquitetura modular de nível institucional, implementando a matemática de proteção ao investidor (Hard Floor).
+                </div>
+                <div class="deliverables">
+                    <h4>>> Entregáveis Técnicos</h4>
+                    <ul>
+                        <li>Divisão do Smart Contract em 3 camadas: GatewayVault, WhitelistRegistry e interfaces de DEX Adapters.</li>
+                        <li>Desenvolvimento do primeiro adaptador funcional: UniswapV3Adapter.</li>
+                        <li>Integração com Oráculos Descentralizados (Chainlink Data Feeds) para marcação a mercado do portfólio.</li>
+                        <li>Implementação da lógica de Drawdown em Valor Absoluto (O Hard Floor).</li>
+                        <li>Lógica de liquidação e cálculo de High-Water Mark para cobrança de taxas de performance.</li>
+                    </ul>
+                </div>
+                <div class="milestone">
+                    <strong>Marco de Sucesso:</strong> O Cofre ejetar autonomamente um script caso o saldo total atinja o limite de perda definido pelo usuário.
+                </div>
+            </div>
+
+            <!-- Sprint 3 -->
+            <div class="sprint-card planned">
+                <div class="sprint-header">
+                    <h3 class="sprint-title">🧠 SPRINT 3: O "Relayer" e Integração com IA Real</h3>
+                    <span class="badge planned">Planejado</span>
+                </div>
+                <div class="sprint-objective">
+                    <strong>Objetivo:</strong> Conectar o ambiente Off-chain (O motor de IA) com o ambiente On-chain (O Gateway) de forma segura, sem exposição de chaves privadas.
+                </div>
+                <div class="deliverables">
+                    <h4>>> Entregáveis Técnicos</h4>
+                    <ul>
+                        <li>Construção da API (Backend em Node.js/Python) que atuará como "Relayer".</li>
+                        <li>Treinamento de um Agente de IA básico (Template: Trend Follower) usando LangChain.</li>
+                        <li>Implementação da criptografia assimétrica: A IA assina digitalmente a intenção de trade off-chain, e a API submete para a blockchain.</li>
+                        <li>O Smart Contract verifica a assinatura (ecrecover).</li>
+                    </ul>
+                </div>
+                <div class="milestone">
+                    <strong>Marco de Sucesso:</strong> IA em Python analisa gráfico, assina a ordem e o Gateway a executa automaticamente na testnet.
+                </div>
+            </div>
+
+            <!-- Sprint 4 -->
+            <div class="sprint-card planned">
+                <div class="sprint-header">
+                    <h3 class="sprint-title">🛡️ SPRINT 4: Computação Confidencial e "Proof of Backtest"</h3>
+                    <span class="badge planned">Planejado</span>
+                </div>
+                <div class="sprint-objective">
+                    <strong>Objetivo:</strong> Implementar a proteção de Propriedade Intelectual (IP) para atrair fundos quantitativos e descentralizar a auditoria do Red Team.
+                </div>
+                <div class="deliverables">
+                    <h4>>> Entregáveis Técnicos</h4>
+                    <ul>
+                        <li>Configuração de Ambientes de Execução Confiáveis (TEEs / Secure Enclaves).</li>
+                        <li>Empacotamento do Agente de IA em containers isolados.</li>
+                        <li>Desenvolvimento da rede de validadores descentralizados para o Consenso de Backtest.</li>
+                        <li>Geração de assinaturas coletivas (Threshold Signatures).</li>
+                        <li>Verificação de Atestação Remota (Remote Attestation) dentro do Smart Contract.</li>
+                    </ul>
+                </div>
+                <div class="milestone">
+                    <strong>Marco de Sucesso:</strong> Agente é aprovado na Whitelist exclusivamente através de prova matemática enviada pelos nós, mantendo o código oculto.
+                </div>
+            </div>
+
+            <!-- Sprint 5 -->
+            <div class="sprint-card planned" style="border-color: rgba(210, 153, 34, 0.4);">
+                <div class="sprint-header">
+                    <h3 class="sprint-title" style="color: var(--warning);">🏛️ SPRINT 5: Mainnet e Governança (DAO)</h3>
+                    <span class="badge future">Visão de Futuro</span>
+                </div>
+                <div class="sprint-objective">
+                    <strong>Objetivo:</strong> Lançar o protocolo em rede principal e repassar o controle absoluto das regras para a comunidade de usuários.
+                </div>
+                <div class="deliverables">
+                    <h4>>> Entregáveis Técnicos</h4>
+                    <ul>
+                        <li>Auditoria externa de segurança profissional nos Smart Contracts.</li>
+                        <li>Deploy oficial na Mainnet (Arbitrum, Optimism ou Polygon).</li>
+                        <li>Criação do Token de Governança do GatewayAgente.</li>
+                        <li>Acionamento da função transferOwnership para os Contratos da DAO.</li>
+                    </ul>
+                </div>
+                <div class="milestone" style="border-color: var(--warning);">
+                    <strong style="color: var(--warning);">Marco de Sucesso:</strong> O primeiro "DEX Adapter" adicionado via proposta on-chain votada pelos detentores de tokens.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
