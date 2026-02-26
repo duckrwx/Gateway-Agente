@@ -6,7 +6,7 @@ Este repositório contém o contrato inteligente `GatewayAgente` e uma interface
 
 ### Sprint 1: Prova de Conceito Web3 (Concluída)
 **Objetivo:** Demonstrar a integração básica entre um site e um contrato inteligente ("Um site conversa com um contrato na blockchain") implementando o registro de um dado on-chain.
-- [x] Contrato Solidity simplificado (`^0.8.19`), achatado para remover dependências externas e evitar problemas de opcode em redes específicas.
+- [x] Contrato Solidity simplificado (`^0.8.20`), achatado para remover dependências externas e evitar problemas de opcode em redes específicas.
 - [x] Deploy na rede **Polygon Amoy Testnet** (Chain ID: 80002).
 - [x] Interface frontend (HTML/JS) simples conectada via Ethers.js (v5.7.2) e MetaMask.
 - [x] Interação on-chain: leitura de estado, simulação de bloqueio (require) e transação bem-sucedida alterando o estado (`ultimoRegistro`).
