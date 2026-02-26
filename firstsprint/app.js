@@ -41,8 +41,8 @@ async function connectWallet() {
             const network = await provider.getNetwork();
             // Verificando Chain ID da Polygon Amoy (80002)
             if (network.chainId !== 80002n) {
-                showStatus("Por favor, mude para a rede Polygon Amoy Testnet no MetaMask!", true);
-                return;
+                showStatus("Aviso: Você não está na rede Polygon Amoy Testnet (Chain ID 80002). As transações podem falhar.", true);
+                // return; // Comentado para permitir conexão mesmo em rede errada temporariamente
             }
 
             const address = await signer.getAddress();
