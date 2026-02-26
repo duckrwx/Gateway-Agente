@@ -2,8 +2,8 @@ const contractAddress = "0x99905D8287B3bDA46fcCAA09Bc6a2819572bec04";
 
 const contractABI = [
     "function uniswapRouter() public view returns (address)",
-    "function ultimoRegistro() public view returns (string)",
-    "function autorizarOperacao(address _destino) public",
+    "function atualizarRotaSegura(address _novoDestino) public",
+    "function transferirParaDAO(address _enderecoDAO) public",
     "function owner() public view returns (address)"
 ];
 
@@ -13,13 +13,13 @@ let contract;
 
 const connectWalletBtn = document.getElementById("connectWalletBtn");
 const walletAddressSpan = document.getElementById("walletAddress");
-const refreshBtn = document.getElementById("refreshBtn");
-const autorizarBtn = document.getElementById("autorizarBtn");
+const atualizarRotaBtn = document.getElementById("atualizarRotaBtn");
+const transferirDAOBtn = document.getElementById("transferirDAOBtn");
 
 const ownerAddressSpan = document.getElementById("ownerAddress");
 const routerAddressSpan = document.getElementById("routerAddress");
-const lastRecordSpan = document.getElementById("lastRecord");
 const statusMessage = document.getElementById("statusMessage");
+const adminPanel = document.getElementById("adminPanel");
 
 function showStatus(message, isError = false) {
     statusMessage.style.display = "block";
@@ -39,22 +39,34 @@ async function connectWallet() {
             signer = await provider.getSigner();
             
             const network = await provider.getNetwork();
-            // Verificando Chain ID da Polygon Amoy (80002)
             if (network.chainId !== 80002n) {
                 showStatus("Por favor, mude para a rede Polygon Amoy Testnet no MetaMask!", true);
                 return;
             }
 
             const address = await signer.getAddress();
-            walletAddressSpan.textContent = address.substring(0, 6) + "..." + address.substring(38);
-            connectWalletBtn.textContent = "Conectado";
-            connectWalletBtn.disabled = true;
+            
+            // Instancia o contrato apenas para leitura primeiro (verificar owner)
+            const readContract = new ethers.Contract(contractAddress, contractABI, provider);
+            const owner = await readContract.owner();
 
-            autorizarBtn.disabled = false;
+            if (address.toLowerCase() !== owner.toLowerCase()) {
+                showStatus(`Acesso Negado: A carteira ${address.substring(0, 6)}... não é a dona do contrato!`, true);
+                adminPanel.style.display = "none";
+                return;
+            }
+
+            // Se for o Owner, libera o painel
+            walletAddressSpan.textContent = address.substring(0, 6) + "..." + address.substring(38);
+            connectWalletBtn.textContent = "Admin Conectado";
+            connectWalletBtn.disabled = true;
+            adminPanel.style.display = "block";
+
+            // Inicializa contrato com Signer
             contract = new ethers.Contract(contractAddress, contractABI, signer);
             
             await updateContractData();
-            showStatus("Carteira conectada! Pronto para enviar transações.");
+            showStatus("Bem-vindo, Admin! Painel liberado.");
         } catch (error) {
             console.error(error);
             showStatus("Erro ao conectar carteira: " + error.message, true);
@@ -66,35 +78,21 @@ async function connectWallet() {
 
 async function updateContractData() {
     try {
-        let readProvider = provider;
-        if (!readProvider) {
-            // Usa o RPC público da Amoy se a MetaMask não estiver conectada
-            readProvider = new ethers.JsonRpcProvider("https://rpc-amoy.polygon.technology/");
-        }
-        
-        const readContract = new ethers.Contract(contractAddress, contractABI, readProvider);
-        
+        const readContract = new ethers.Contract(contractAddress, contractABI, provider);
         const owner = await readContract.owner();
         const router = await readContract.uniswapRouter();
-        const record = await readContract.ultimoRegistro();
 
         ownerAddressSpan.textContent = owner;
         routerAddressSpan.textContent = router;
-        lastRecordSpan.textContent = record || "Nenhum registro encontrado.";
-        
     } catch (error) {
         console.error("Erro ao ler dados:", error);
-        ownerAddressSpan.textContent = "Erro na rede";
-        routerAddressSpan.textContent = "Erro na rede";
-        lastRecordSpan.textContent = "Erro na rede";
-        showStatus("Erro de conexão com a Polygon Amoy. A rede pode estar congestionada.", true);
     }
 }
 
 async function sendTransaction(action, ...args) {
     if (!contract) return;
     try {
-        showStatus("Processando transação... Por favor, confirme no MetaMask.");
+        showStatus("Processando transação de administrador... Confirme na MetaMask.");
         const tx = await contract[action](...args);
         showStatus(`Transação enviada! Aguardando confirmação... Hash: ${tx.hash}`);
         
@@ -112,16 +110,21 @@ async function sendTransaction(action, ...args) {
 }
 
 connectWalletBtn.addEventListener("click", connectWallet);
-refreshBtn.addEventListener("click", updateContractData);
 
-autorizarBtn.addEventListener("click", () => {
-    const destino = document.getElementById("destinoInput").value;
-    if (!destino) {
-        showStatus("Informe o endereço de destino.", true);
+atualizarRotaBtn.addEventListener("click", () => {
+    const novaRota = document.getElementById("novaRotaInput").value;
+    if (!novaRota) {
+        showStatus("Informe o novo endereço da rota.", true);
         return;
     }
-    sendTransaction("autorizarOperacao", destino);
+    sendTransaction("atualizarRotaSegura", novaRota);
 });
 
-// Apenas lê os dados do contrato (não chama MetaMask) ao abrir a página
-window.onload = updateContractData;
+transferirDAOBtn.addEventListener("click", () => {
+    const novaDAO = document.getElementById("novaDAOInput").value;
+    if (!novaDAO) {
+        showStatus("Informe o endereço da nova DAO.", true);
+        return;
+    }
+    sendTransaction("transferirParaDAO", novaDAO);
+});

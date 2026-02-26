@@ -3,113 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gateway Agente - Sepolia</title>
+    <title>Gateway Agente - Polygon Amoy</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        h1 {
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
-        }
-        .card {
-            background: #fff;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        button:disabled {
-            background-color: #bdc3c7;
-            cursor: not-allowed;
-        }
-        input {
-            padding: 10px;
-            width: 100%;
-            margin-top: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .status {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e8f8f5;
-            border-left: 4px solid #1abc9c;
-            border-radius: 4px;
-        }
-        .error {
-            background-color: #fdedec;
-            border-left: 4px solid #e74c3c;
-        }
-        .wallet-info {
-            float: right;
-            background: #ecf0f1;
-            padding: 10px;
-            border-radius: 4px;
-        }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        .card { background: #fff; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        button { background-color: #3498db; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        button:hover { background-color: #2980b9; }
+        button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        input { padding: 10px; width: 100%; margin-top: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .status { margin-top: 20px; padding: 15px; background-color: #e8f8f5; border-left: 4px solid #1abc9c; border-radius: 4px; }
+        .error { background-color: #fdedec; border-left: 4px solid #e74c3c; }
+        .wallet-info { float: right; background: #ecf0f1; padding: 10px; border-radius: 4px; }
+        .admin-link { display: inline-block; margin-top: 10px; color: #7f8c8d; text-decoration: none; font-size: 14px; }
+        .admin-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
-
     <div class="wallet-info">
         <span id="walletAddress">Não conectado</span>
         <button id="connectWalletBtn">Conectar MetaMask</button>
     </div>
 
-    <h1>Painel de Controle: Gateway Agente</h1>
-    <p>Interaja com o contrato inteligente na rede <strong>Sepolia Testnet</strong>.</p>
+    <h1>Interface Pública: Gateway Agente</h1>
+    <p>Interaja com o contrato inteligente na rede <strong>Polygon Amoy Testnet</strong>.</p>
     <p>Endereço do Contrato: <code>0x99905D8287B3bDA46fcCAA09Bc6a2819572bec04</code></p>
 
     <div class="card">
         <h2>Status do Contrato</h2>
         <p><strong>Dono Atual (Owner):</strong> <span id="ownerAddress">Carregando...</span></p>
-        <p><strong>Uniswap Router Autorizado:</strong> <span id="routerAddress">Carregando...</span></p>
+        <p><strong>Rota Autorizada:</strong> <span id="routerAddress">Carregando...</span></p>
         <p><strong>Último Registro:</strong> <span id="lastRecord">Carregando...</span></p>
         <button id="refreshBtn">Atualizar Dados</button>
     </div>
 
     <div class="card">
-        <h2>Autorizar Operação</h2>
-        <p>Somente o endereço autorizado (Uniswap Router) será aceito.</p>
+        <h2>Autorizar Operação (Agente)</h2>
+        <p>Apenas será aceito o endereço configurado na Rota Autorizada.</p>
         <input type="text" id="destinoInput" placeholder="Ex: 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D">
-        <button id="autorizarBtn" disabled>Autorizar Operação</button>
-    </div>
-
-    <div class="card">
-        <h2>Painel Admin (Apenas Dono)</h2>
-        
-        <h3>Atualizar Rota Segura</h3>
-        <input type="text" id="novaRotaInput" placeholder="Novo endereço do Router">
-        <button id="atualizarRotaBtn" disabled>Atualizar Rota</button>
-
-        <h3 style="margin-top: 20px;">Transferir para DAO</h3>
-        <input type="text" id="novaDAOInput" placeholder="Endereço da nova DAO">
-        <button id="transferirDAOBtn" disabled style="background-color: #e67e22;">Transferir Governança</button>
+        <button id="autorizarBtn" disabled>Enviar Transação</button>
     </div>
 
     <div id="statusMessage" class="status" style="display: none;"></div>
+    
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="admin/" class="admin-link">Ir para o Painel de Administração (Apenas Owner)</a>
+    </div>
 
-    <!-- Ethers.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.11.1/ethers.umd.min.js"></script>
     <script src="app.js"></script>
 </body>
