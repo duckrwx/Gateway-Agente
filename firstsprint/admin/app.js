@@ -40,8 +40,19 @@ async function connectWallet() {
             
             const network = await provider.getNetwork();
             if (network.chainId !== 11155111n) {
-                showStatus("Por favor, mude para a rede Sepolia Testnet no MetaMask!", true);
-                return;
+                try {
+                    showStatus("Solicitando troca para a rede Sepolia...");
+                    await window.ethereum.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: '0xaa36a7' }],
+                    });
+                    provider = new ethers.BrowserProvider(window.ethereum);
+                    signer = await provider.getSigner();
+                } catch (switchError) {
+                    console.error(switchError);
+                    showStatus("Acesso cancelado. Você precisa trocar para a rede Sepolia Testnet!", true);
+                    return;
+                }
             }
 
             const address = await signer.getAddress();
