@@ -1,0 +1,15 @@
+{
+  "name": "gatewayagente",
+  "version": "1.0.0",
+  "description": "Este repositório contém o contrato inteligente `GatewayAgente` e uma interface web (frontend) para interagir com ele. O contrato foi desenvolvido em Solidity e já se encontra implantado na rede **Sepolia Testnet**.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.4.0"
+  }
+}
