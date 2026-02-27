@@ -169,68 +169,228 @@
     <div class="container">
         <div class="paper-header">
             <h1>WHITEPAPER: GatewayAgente</h1>
-            <div class="subtitle">Infraestrutura Criptoeconômica e Firewall Descentralizado para Agentes de IA em DeFi</div>
+            <div class="subtitle">Infraestrutura Criptoeconômica e Firewall Descentralizado para Agentes em DeFi</div>
         </div>
 
         <div class="paper-content">
             
             <h2>1. Resumo Executivo (Abstract)</h2>
-            <p>A intersecção entre Inteligência Artificial (IA) e Finanças Descentralizadas (DeFi) representa o ápice da eficiência na alocação de capital. Contudo, o paradigma atual de delegar custódia ou permissões irrestritas a modelos autônomos introduz vetores de ataque catastróficos, como exfiltração de fundos e alucinações algorítmicas. O GatewayAgente soluciona o "Trilema da Automação" através de uma arquitetura de Smart Vault modular. Ao isolar a inteligência off-chain da execução on-chain, empregar um limite rígido de perdas absolutas (Hard Floor) e proteger a propriedade intelectual das estratégias através de um consenso descentralizado de backtest (Proof of Backtest), o protocolo garante matematicamente que IAs possam operar capital em larga escala sem jamais possuir a capacidade de extraí-lo indevidamente.</p>
+            <p>A automação em cripto vive um paradoxo. Quem tem capital de verdade não confia em bots, copy trading ou “gestores DeFi” porque sempre existe alguém com poder de sacar, travar ou destruir o portfólio. Quem tem uma estratégia realmente boa não quer expor seu código nem assumir o peso regulatório de administrar dinheiro de terceiros.</p>
+            <p>O GatewayAgente resolve esse impasse ao transformar qualquer agente de trading em um <strong>fundo descentralizado de mandato fechado</strong>. O capital é custodiado por um Smart Vault imutável, que impõe limites matemáticos de perda (Hard Floor) e só executa operações dentro de uma whitelist de tokens, swaps e protocolos considerados seguros pela DAO. A estratégia vive em um container caixapreta, identificado por hash, validado por uma rede de backtest descentralizada (Proof of Backtest) e remunerada por performance fee direta on-chain — sem nunca revelar código ou lógica proprietária.</p>
+            <p>O resultado é uma nova camada de infraestrutura: investidores mantêm proteção contra ruína e previsibilidade de mandato, desenvolvedores operam como se tivessem um fundo global escalável em cima de sua estratégia, e a blockchain garante, linha por linha, o que pode ou não acontecer com o dinheiro.</p>
 
-            <h2>2. O Paradigma Atual e a Falácia da Custódia em IA</h2>
-            <p>O modelo padrão de "Trading Bots" exige que o usuário deposite liquidez em uma carteira (EOA) controlada pela automação. Essa arquitetura é insustentável para capital institucional devido a três falhas críticas:</p>
+            <h2>2. O Problema: Bots, Copy Trading e a Falácia da Confiança</h2>
+            <p>O modelo dominante de automação hoje é baseado em confiança implícita:</p>
             <ul>
-                <li><strong>Exfiltração P2P:</strong> Um agente hackeado (ou malicioso desde a sua concepção) pode transferir o TVL (Valor Total Bloqueado) diretamente para uma carteira anônima.</li>
-                <li><strong>Drenagem via Scam Tokens:</strong> O agente utiliza uma DEX legítima para comprar um token sem liquidez criado pelo próprio invasor, transferindo o valor do cofre de forma indireta.</li>
-                <li><strong>Roubo de Alpha (Propriedade Intelectual):</strong> Para auditar a segurança de um robô, plataformas centralizadas exigem acesso ao código-fonte, expondo desenvolvedores ao roubo de suas estratégias proprietárias.</li>
+                <li>Bots que operam em contas custodiais ou com acesso direto à chave do investidor.</li>
+                <li>Plataformas de copy/mirror trading onde o usuário não controla o motor de risco nem o livro de ordens.</li>
+                <li>Vaults DeFi em que a lógica de estratégia é visível, upgradável ou dependente de multisigs pouco transparentes.</li>
             </ul>
+            <p>Isso cria um jogo ruim para os dois lados.</p>
+            <p><strong>Para o investidor:</strong></p>
+            <ul>
+                <li>Sempre existe um agente com poder discricionário: corretora, operador de bot, multisig de admin.</li>
+                <li>Não há garantia matemática de que limites de perda serão respeitados; stops e circuit breakers são “melhor esforço”, não leis do protocolo.</li>
+                <li>Track records são fáceis de manipular com backtests, cherry picking e janelas escolhidas a dedo.</li>
+            </ul>
+            <p><strong>Para o desenvolvedor de estratégia:</strong></p>
+            <ul>
+                <li>Expor código para auditoria ou listagem em plataforma centralizada significa abrir mão do seu alpha.</li>
+                <li>Operar capital de terceiros em estruturas tradicionais implica lidar com regulação pesada, backoffice e risco jurídico.</li>
+                <li>Mesmo quando consegue montar estrutura, sua reputação fica presa a bancos de dados privados de corretoras, não a um histórico verificável e portável.</li>
+            </ul>
+            <p>No limite, o que falta não é mais um bot, nem mais um vault genérico. Falta uma infraestrutura que torne <strong>impossível</strong> o roubo por design, <strong>inútil</strong> a fraude de track record e <strong>diretamente recompensado</strong> o comportamento consistente de quem realmente sabe o que está fazendo.</p>
 
-            <h2>3. A Arquitetura Central: O Cérebro e a Mão</h2>
-            <p>O GatewayAgente implementa o Princípio do Privilégio Mínimo através da fragmentação da operação:</p>
+            <h2>3. Arquitetura Central: Vault de Mandato Fechado + Agente Caixapreta</h2>
+            <p>O GatewayAgente se baseia em uma separação radical de funções: o capital nunca conhece o código, e o código nunca toca no capital.</p>
+
+            <h3>3.1. O Vault (a Mão)</h3>
+            <p>O Gateway Vault é um Smart Contract não custodial que:</p>
             <ul>
-                <li><strong>O Cérebro (IA - Off-chain):</strong> Monitora o mercado, elabora estratégias e emite um sinal de intenção (ex: "Swap de WBTC por USDC"). A IA atua apenas como um oráculo de sinais e não possui chaves de acesso aos fundos.</li>
-                <li><strong>A Mão (Gateway Vault - On-chain):</strong> O Smart Contract que detém a custódia. Ele recebe a intenção do Cérebro, submete a ordem a um Firewall Matemático e, se validada, executa a operação. O capital transita exclusivamente por canais criptograficamente aprovados.</li>
+                <li>Detém os ativos do investidor.</li>
+                <li>Aplica um mandato fechado: não permite saques antes de um prazo e/ou alvo de retorno definidos na criação do contrato.</li>
+                <li>Enforça, on-chain, um Hard Floor absoluto de perda, em valor nominal, abaixo do qual nenhuma operação é permitida.</li>
+                <li>Só executa swaps por meio de adaptadores whitelisted para protocolos e pares previamente aprovados pela DAO.</li>
             </ul>
+            <p>Na prática, o Vault funciona como um “fundo fechado em código”: uma vez definidos o agente, o horizonte de tempo, o piso de segurança e o universo de ativos permitidos, ninguém — nem o protocolo, nem o desenvolvedor, nem o próprio investidor — consegue violar essas regras sem que a transação simplesmente falhe.</p>
+
+            <h3>3.2. O Agente (o Cérebro)</h3>
+            <p>O Agente é um container imutável que:</p>
+            <ul>
+                <li>Monitora o mercado off-chain, aplica a lógica de decisão do desenvolvedor e produz apenas intenções de operação altamente restritas.</li>
+                <li>Não detém chaves privadas de saque, não tem acesso direto ao Vault e não decide para onde o capital pode ir — apenas o que deseja comprar/vender dentro de um sandbox pré-definido.</li>
+                <li>É identificado on-chain por um hash de imagem (H) e uma chave pública (K) usada para assinar intents.</li>
+            </ul>
+            <p>O canal entre Cérebro e Mão é uma única função, com poucos parâmetros, que o Vault pode verificar e simular localmente antes de aceitar ou rejeitar.</p>
 
             <div class="highlight-box">
                 [Fluxo de Execução]<br>
-                1. IA -> Emite Sinal Assinado<br>
-                2. Smart Vault -> Valida Assinatura da IA<br>
-                3. Smart Vault -> Verifica limites de Drawdown e Destinos Permitidos<br>
-                4. Smart Vault -> Roteia para o Adapter da DEX correspondente
+                1. Agente -> Gera Intent com parâmetros limitados<br>
+                2. Agente -> Assina a Intent com a chave K<br>
+                3. Vault -> Verifica assinatura, Hard Floor, mandato e whitelist de tokens/protocolos<br>
+                4. Vault -> Roteia para o Adapter da DEX correspondente e executa se tudo estiver dentro das regras
             </div>
 
-            <h2>4. O Padrão Modular (Adapter Pattern) e Whitelist Dinâmica</h2>
-            <p>Para interagir com o ecossistema DeFi sem criar um contrato monolítico e frágil, o GatewayAgente utiliza o Padrão de Adaptadores, dividido em três camadas:</p>
+            <h2>4. Mandato Fechado: Tempo, Alvo e Sem Resgate Antecipado</h2>
+            <p>Cada Vault nasce com um mandato explícito, que define as regras do jogo do início ao fim.</p>
+
+            <h3>4.1. Sem resgate antecipado</h3>
+            <p>No modelo do GatewayAgente:</p>
             <ul>
-                <li><strong>Gateway Vault (O Núcleo):</strong> Retém o capital. Recebe a chamada da IA e consulta a camada de permissões.</li>
-                <li><strong>Whitelist Registry (O Juiz):</strong> Um registro dinâmico (mapping) que dita quais protocolos e pares de tokens são seguros. Funciona como um Circuit Breaker contra hacks externos.</li>
-                <li><strong>DEX Adapters (Os Tradutores):</strong> Contratos stateless (sem estado financeiro) que traduzem o comando universal da IA para a linguagem específica de cada protocolo (ex: Uniswap V3, Curve).</li>
+                <li>A função de saque (<code>withdraw</code>) só é habilitada quando ao menos uma das condições é satisfeita:
+                    <ul>
+                        <li>o tempo de mandato foi atingido (<code>block.timestamp &gt;= endTimestamp</code>), ou</li>
+                        <li>o valor do Vault atingiu ou superou o alvo de retorno (<code>NAV &gt;= targetNAV</code>).</li>
+                    </ul>
+                </li>
+                <li>Antes disso, o investidor não consegue retirar parcial ou totalmente.</li>
+                <li>O owner do Vault pode acionar <code>stopStrategy()</code> para pausar novas operações do agente, congelando o portfólio até o fim do mandato.</li>
+            </ul>
+            <p>Isso elimina duas fragilidades comuns: runs de liquidez induzidos por pânico em momentos de drawdown e gaming de performance fee por resgates oportunistas logo após um pico de lucro.</p>
+
+            <h3>4.2. Hard Floor: limite absoluto de perda</h3>
+            <p>Além do mandato temporal/econômico, o Vault grava um <strong>Hard Floor</strong> em valor absoluto:</p>
+            <ul>
+                <li>Se o investidor aloca, por exemplo, 10.000 unidades de valor com Hard Floor de 1.500 unidades de perda máxima, o contrato fixa um piso em 8.500.</li>
+                <li>Antes de cada execução, o Vault consulta oráculos de preço para marcar a mercado todos os ativos, estima o valor pós-trade e rejeita qualquer operação que levaria o valor abaixo desse piso.</li>
+            </ul>
+            <p>Assim, o “limite de perda” deixa de ser uma promessa de bom comportamento e se torna uma propriedade matemática do sistema.</p>
+
+            <h2>5. Drawdown da Estratégia: Espaço para Jogar sem Quebrar</h2>
+            <p>Nenhuma estratégia séria vive sem drawdown. A questão correta não é evitar perda, e sim controlar quanta perda é aceitável antes de caracterizar ruína ou quebra de mandato.</p>
+            <p>O GatewayAgente separa dois níveis de proteção:</p>
+            <ul>
+                <li><strong>Hard Floor do investidor:</strong> limite absoluto de perda em valor nominal, inegociável, gravado no contrato.</li>
+                <li><strong>Orçamento de drawdown da estratégia (<code>strategyDrawdownBudget</code>):</strong> margem operacional declarada pelo agente, em que ele pode oscilar abaixo de picos locais sem ser “stopado à força”.</li>
+            </ul>
+            <p>Durante o processo de aprovação (Proof of Backtest):</p>
+            <ul>
+                <li>O desenvolvedor declara o budget de drawdown necessário para sua estratégia operar de forma saudável em determinado horizonte.</li>
+                <li>A rede de backtest simula o container sob diferentes regimes de mercado, aplicando ao mesmo tempo o Hard Floor e o budget interno.</li>
+                <li>São aprovadas apenas combinações em que a estratégia demonstra capacidade de operar sem encostar continuamente no piso absoluto ou explodir o budget de forma sistemática.</li>
+            </ul>
+            <p>No ciclo real, o Vault pode rastrear picos de valor locais, drawdown em relação a esses picos e acionar pausas automáticas se o comportamento sair do envelope aprovado.</p>
+
+            <h2>6. Agentes Imutáveis: Hash de Container como Identidade Estratégica</h2>
+            <p>A peça que transforma estratégia em ativo exportável é o modelo de agente como artefato imutável.</p>
+
+            <h3>6.1. Definição formal do agente</h3>
+            <p>Um agente <em>A</em> no GatewayAgente é definido pelo par (<em>H</em>, <em>K</em>):</p>
+            <ul>
+                <li><strong>H:</strong> hash criptográfico (por exemplo, SHA-256) da imagem do container que contém a lógica da estratégia.</li>
+                <li><strong>K:</strong> chave pública usada pelo container para assinar intents enviados ao Vault.</li>
+            </ul>
+            <p>On-chain, o protocolo não precisa conhecer absolutamente nada sobre o código interno. Ele só precisa garantir que qualquer intent aceito pelo Vault foi assinada por <em>K</em> e que o par (<em>H</em>, <em>K</em>) foi previamente aprovado pela rede de backtest dentro de um perfil de risco específico.</p>
+            <p>Qualquer alteração de lógica — desde ajustes finos até uma mudança completa de modelo — implica um novo hash <em>H’</em>, e portanto um novo agente. Não existe “update silencioso” que reutilize o mesmo identificador estratégico.</p>
+
+            <h3>6.2. Interface mínima do container</h3>
+            <p>Do ponto de vista operacional, todo container de agente expõe uma interface mínima, por exemplo:</p>
+            <ul>
+                <li><strong>Input:</strong> snapshot padronizado do estado de mercado (preços, liquidez, posições do Vault, carimbo de tempo, etc.).</li>
+                <li><strong>Output:</strong> uma intenção de operação (<code>Intent</code>) com campos limitados, como <code>tokenIn</code>, <code>tokenOut</code>, <code>amountIn</code>, <code>minAmountOut</code>, <code>deadline</code> e, opcionalmente, uma rota sugerida.</li>
+            </ul>
+            <p>Dentro dessa caixa-preta, o desenvolvedor é livre para usar qualquer combinação de modelos, heurísticas ou sinais. Fora dela, o protocolo só enxerga um objeto simples que pode ser checado contra limites do Vault e contra a whitelist global de ativos e protocolos.</p>
+
+            <h2>7. Proof of Backtest: Validação Caixapreta em Rede Descentralizada</h2>
+            <p>Para evitar tanto roubo de estratégia quanto marketing enganoso de performance, a aprovação de um agente no GatewayAgente não depende de confiança em uma entidade única, e sim de um processo de backtest descentralizado.</p>
+
+            <h3>7.1. Rede de backtest (DON)</h3>
+            <p>O protocolo define uma rede de nós especializados em simulação, a DON (Decentralized Oracle Network) de backtest, que:</p>
+            <ul>
+                <li>Recebe o container do agente (ou um artefato equivalente) e metadados de risco declarados (horizonte mínimo, budget de drawdown, classes de ativos suportadas).</li>
+                <li>Usa datasets históricos padronizados de mercado e liquidez, cobrindo diferentes regimes de volatilidade e stress.</li>
+                <li>Executa o container como caixa-preta, alimentando inputs e registrando a sequência de intents emitidas ao longo do tempo.</li>
+            </ul>
+            <p>Sobre essa sequência, cada nó aplica localmente um simulador do próprio Vault:</p>
+            <ul>
+                <li>aplica Hard Floor e mandato fechado;</li>
+                <li>aplica whitelists de tokens, pares e protocolos;</li>
+                <li>calcula valor do Vault a cada passo, PnL, drawdown e outros indicadores.</li>
             </ul>
 
-            <h2>5. Mecânica Criptoeconômica: Oráculos, High-Water Mark e Hard Floor</h2>
-            <p>Para proteger o capital contra a volatilidade extrema e gerenciar a rentabilidade, o protocolo abandona cálculos percentuais frágeis em Solidity e adota métricas absolutas rigorosas:</p>
+            <h3>7.2. Consenso de aprovação</h3>
+            <p>Se, após o período de simulação:</p>
             <ul>
-                <li><strong>Marcação a Mercado via Oráculos:</strong> O cofre utiliza redes de oráculos descentralizados (como a Chainlink) para avaliar o valor total do portfólio (ex: WBTC + USDC) em tempo real a cada transação, sem depender de liquidações parciais para calcular o lucro.</li>
-                <li><strong>Drawdown em Valor Absoluto (Hard Floor):</strong> Se um investidor aloca US$ 10.000 com um limite de perda de US$ 1.500, o Smart Contract grava o <em>pisoDeSeguranca</em> fixo em US$ 8.500. Se a precificação do oráculo atingir US$ 8.499 no milissegundo de uma operação, a IA é sumariamente ejetada e o capital remanescente é trancado para saque.</li>
-                <li><strong>High-Water Mark:</strong> A taxa de performance da IA só é paga sobre o lucro real (o valor que ultrapassa o maior pico histórico do cofre no fechamento do ciclo), alinhando perfeitamente a ganância do desenvolvedor com o sucesso do investidor.</li>
+                <li>o agente respeita consistentemente o Hard Floor;</li>
+                <li>opera dentro do budget de drawdown declarado;</li>
+                <li>e não tenta usar rotas ou ativos fora da whitelist de teste,</li>
+            </ul>
+            <p>cada nó emite um voto de aprovação. Quando um quorum mínimo é atingido, a DON produz uma assinatura agregada sobre uma mensagem resumida (por exemplo, “o agente (H, K) é aprovado para operar nas classes de ativos X, Y, Z, com horizonte mínimo T e budget de drawdown D”).</p>
+            <p>Essa assinatura é então enviada para o contrato <code>AgentRegistry</code> on-chain, que verifica a validade criptográfica, checa quorum e regras de governança, e registra (<em>H</em>, <em>K</em>) como agente aprovado com o perfil de risco correspondente.</p>
+
+            <h2>8. Governança DAO: Curadoria de Risco e Evolução do Protocolo</h2>
+            <p>O GatewayAgente foi desenhado para, progressivamente, transferir o poder de decisão sobre risco e integrações para uma Organização Autônoma Descentralizada (DAO). A DAO atua como um “regulador on-chain”, definindo o universo de ações possíveis para todos os Vaults e agentes.</p>
+
+            <h3>8.1. Whitelist global de tokens, swaps e protocolos</h3>
+            <p>A DAO controla um registro global de permissões que define:</p>
+            <ul>
+                <li>Quais tokens são elegíveis para operação, classificados por categoria de risco (blue chips, stablecoins auditadas, long tail, experimentais).</li>
+                <li>Quais pares de tokens e rotas de swap são permitidos (por exemplo, WBTC ↔ USDC em DEX X; proibição de memecoins sem liquidez mínima).</li>
+                <li>Quais DEXs, bridges e protocolos de liquidez podem ser usados pelos Vaults.</li>
+            </ul>
+            <p>Nenhum Vault pode manter exposição em um ativo que não esteja previamente aprovado pela DAO. Se um token for removido da lista — por exemplo, após um incidente de segurança — os Vaults só podem reduzir ou desmontar posições nesse ativo, nunca aumentá-las. A whitelist de tokens funciona como uma camada coletiva de “risk officer on-chain” para todo o ecossistema.</p>
+
+            <h3>8.2. Parâmetros globais de risco</h3>
+            <p>Além das whitelists, a DAO define parâmetros globais que impactam todos os Vaults, como:</p>
+            <ul>
+                <li>Faixas permitidas de Hard Floor para produtos públicos.</li>
+                <li>Limites máximos de alavancagem ou exposição sintética, caso o protocolo passe a suportar derivativos no futuro.</li>
+                <li>Políticas padrão de slippage, tamanho de ordem relativa e frequência máxima de operações.</li>
             </ul>
 
-            <h2>6. Privacidade e Auditoria Descentralizada: "Proof of Backtest"</h2>
-            <p>Como validar uma IA sem exigir que o criador revele seu código secreto? O GatewayAgente introduz uma rede descentralizada de validação (DON) aliada a Ambientes de Execução Confiáveis (TEEs).</p>
+            <h3>8.3. Governança da rede de backtest e validadores</h3>
+            <p>A DAO também é responsável por:</p>
             <ul>
-                <li><strong>A Submissão "Caixa Preta":</strong> O desenvolvedor submete seu agente compilado (Docker/TEE) à rede, ocultando totalmente os pesos do modelo e a lógica de trading.</li>
-                <li><strong>Consenso de Sandbox:</strong> Uma rede descentralizada de nós validadores executa o agente em um ambiente simulado contra dados históricos padronizados.</li>
-                <li><strong>Validação Criptográfica (Threshold Signatures):</strong> Os nós não julgam a tese de investimento, apenas os limites de risco. Se o agente respeitar o Hard Floor e não tentar desvios maliciosos, os nós atingem um consenso matemático.</li>
-                <li><strong>Registro On-chain:</strong> A rede gera uma assinatura coletiva que o Smart Contract reconhece. O robô é aprovado na Whitelist de forma autônoma, preservando 100% do sigilo (Zero-Knowledge) sobre o seu "Alpha".</li>
+                <li>Definir critérios de elegibilidade para nós da rede de backtest (stake mínimo, requisitos técnicos, histórico de performance).</li>
+                <li>Especificar regras de recompensa por backtests válidos e penalidades em caso de comportamento fraudulento ou negligente.</li>
+                <li>Ajustar o tamanho de comitês de simulação e o quorum necessário para aprovação de um agente.</li>
             </ul>
 
-            <h2>7. Governança Progressiva</h2>
-            <p>A arquitetura do GatewayAgente foi desenhada para uma transição fluida de controle. Na fase Gênesis, parâmetros críticos e adaptadores de emergência podem ser geridos por um Admin/Red Team para garantir agilidade contra exploits de Dia Zero. Contudo, através de funções integradas de transferência de propriedade (transferOwnership), o protocolo converte-se progressivamente em uma Organização Autônoma Descentralizada (DAO). O poder de registrar novos adaptadores, alterar limites globais de risco e gerenciar a rede de nós de backtest passa a exigir o consenso on-chain da comunidade de detentores de tokens.</p>
+            <h2>9. Leaderboard On-chain e Incentivos para Desenvolvedores</h2>
+            <p>Para que o ecossistema floresça, o GatewayAgente precisa ser o melhor lugar do mundo para um desenvolvedor sério publicar sua estratégia. Isso exige um sistema transparente de reputação e um modelo de incentivos que recompensa resultados consistentes, não apenas volatilidade.</p>
 
-            <h2>8. Conclusão</h2>
-            <p>O GatewayAgente redefine a automação de capital institucional na Web3. Ao transformar a Inteligência Artificial de uma entidade onipotente e perigosa em um "oráculo de intenções" restrito por limites absolutos, validado por consenso descentralizado e executado via adaptadores isolados, o protocolo resolve o paradoxo da segurança DeFi. O resultado é um ecossistema onde desenvolvedores mantêm a privacidade de suas teses, investidores têm proteção matemática contra a ruína, e o capital flui com a máxima eficiência algorítmica.</p>
-            
+            <h3>9.1. Leaderboard de performance real</h3>
+            <p>Todas as execuções de Vaults são on-chain, o que permite construir um leaderboard público e impossível de manipular. Para cada agente (<em>H</em>, <em>K</em>), o protocolo e ferramentas de analytics podem exibir:</p>
+            <ul>
+                <li>Retorno total realizado em ciclos de mandato fechados.</li>
+                <li>Máximo drawdown real ao longo de cada ciclo.</li>
+                <li>Quantidade de ciclos completos já encerrados.</li>
+                <li>AUM médio e máximo sob gestão (soma do valor de todos os Vaults que usam aquele agente).</li>
+                <li>Taxa de sucesso: quantos mandatos bateram o alvo de retorno vs. quantos apenas chegaram ao fim do período.</li>
+            </ul>
+
+            <h3>9.2. Performance fee on-chain: o dev como gestor de um fundo descentralizado</h3>
+            <p>Cada Vault operado por um agente cobra uma taxa de performance sobre o lucro acima do high-water mark, definida na criação do contrato. Ao final do mandato:</p>
+            <ul>
+                <li>O contrato calcula o lucro líquido em relação ao maior valor histórico do Vault.</li>
+                <li>Aplica a taxa de performance acordada.</li>
+                <li>Distribui automaticamente a parcela do desenvolvedor para um endereço de recompensa associado ao agente (<em>H</em>, <em>K</em>) e, opcionalmente, uma parcela para o tesouro da DAO.</li>
+            </ul>
+
+            <h3>9.3. Vaults do próprio desenvolvedor: skin in the game</h3>
+            <p>O GatewayAgente incentiva explicitamente que o criador de uma estratégia aloque capital próprio em um Vault operado por seu agente. Isso cria um selo de <strong>skin in the game</strong>:</p>
+            <ul>
+                <li>Vaults em que o desenvolvedor do agente é também um investidor significativo recebem destaque especial na interface (selo visual, filtros, tags).</li>
+                <li>A DAO pode aprovar políticas em que esses Vaults tenham condições diferenciadas, como uma fração levemente menor de taxa da plataforma.</li>
+            </ul>
+
+            <h2>10. Comparação com Modelos Tradicionais</h2>
+            <p>Para ilustrar a diferença de paradigma, o quadro abaixo resume os principais pontos:</p>
+            <ul>
+                <li><strong>Bots / Copy Trading CEX:</strong> custódia centralizada, stops off-book, track record privado.</li>
+                <li><strong>Vaults DeFi tradicionais:</strong> contratos upgradáveis, estratégia muitas vezes visível e dependente de multisigs.</li>
+                <li><strong>GatewayAgente:</strong> Smart Vault imutável, mandato fechado, Hard Floor absoluto, agentes caixapreta e track record 100% on-chain.</li>
+            </ul>
+
+            <h2>11. Roadmap Inicial</h2>
+            <p>O roadmap de implementação privilegia pragmatismo e segurança:</p>
+            <ul>
+                <li><strong>Fase 1:</strong> deploy em L2 EVM, primeiro tipo de Vault de mandato fechado, 2–3 agentes internos, leaderboard básico.</li>
+                <li><strong>Fase 2:</strong> abertura para containers de devs externos, DON mínima de backtest, DAO inicial para whitelist de tokens, pares e protocolos.</li>
+                <li><strong>Fase 3:</strong> extensões (TEEs opcionais, múltiplas L2s, produtos institucionais específicos) conforme tração e demanda.</li>
+            </ul>
+            <p>O objetivo é claro: tornar o GatewayAgente a infraestrutura padrão para transformar estratégias em fundos descentralizados, com segurança matemática, incentivos alinhados e reputação on-chain.</p>
+
         </div>
     </div>
 
